@@ -8,8 +8,144 @@ datasource db {
     directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+enum Role {
+    USER
+    ADMIN
+    WORKER
+    SUPER_ADMIN
+}
+
+enum Status {
+    NEW
+    OPERATING
+    RESOLVED
+}
+
 model User {
-    id    Int     @id @default(autoincrement())
-    email String  @unique
-    name  String?
+    id             Int           @id @default(autoincrement())
+    email          String        @unique
+    password       String
+    role           Role          @default(USER)
+    profileId      Int           @unique
+    profile        Profile       @relation(fields: [profileId], references: [id])
+    medicalUnitId  Int?
+    medicalUnit    MedicalUnit?  @relation(fields: [medicalUnitId], references: [id])
+    sanitaryUnitId Int?
+    sanitaryUnit   SanitaryUnit? @relation(fields: [sanitaryUnitId], references: [id])
+}
+
+model Profile {
+    id        Int     @id @default(autoincrement())
+    firstName String
+    lastName  String
+    pesel     String  @unique
+    user      User?
+    contactId Int     @unique
+    contact   Contact @relation(fields: [contactId], references: [id])
+}
+
+model Address {
+    id              Int           @id @default(autoincrement())
+    label           String
+    countryName     String
+    state           String
+    postalCode      String
+    city            String
+    street          String?
+    houseNumber     String
+    apartmentNumber String?
+    medicalUnit     MedicalUnit?
+    sanitaryUnit    SanitaryUnit?
+    interview       Interview?
+}
+
+model Contact {
+    id           Int           @id @default(autoincrement())
+    email        String?
+    phoneNumber  String?
+    medicalUnit  MedicalUnit?
+    profile      Profile?
+    sanitaryUnit SanitaryUnit?
+    interview    Interview?
+}
+
+model MedicalUnit {
+    id             Int          @id @default(autoincrement())
+    name           String
+    sanitaryUnitId Int
+    sanitaryUnit   SanitaryUnit @relation(fields: [sanitaryUnitId], references: [id])
+    addressId      Int          @unique
+    address        Address      @relation(fields: [addressId], references: [id])
+    contactId      Int          @unique
+    contact        Contact      @relation(fields: [contactId], references: [id])
+    workers        User[]
+    reports        Report[]
+}
+
+model SanitaryUnit {
+    id           Int           @id @default(autoincrement())
+    name         String
+    addressId    Int           @unique
+    address      Address       @relation(fields: [addressId], references: [id])
+    contactId    Int           @unique
+    contact      Contact       @relation(fields: [contactId], references: [id])
+    workers      User[]
+    medicalUnits MedicalUnit[]
+    reports      Report[]
+}
+
+model Disease {
+    id      Int      @id @default(autoincrement())
+    code    String
+    name    String
+    desc    String?
+    desc2   String?
+    reports Report[]
+}
+
+model Report {
+    id             Int          @id @default(autoincrement())
+    status         Status       @default(NEW)
+    firstName      String
+    lastName       String
+    pesel          String
+    interview      Interview[]
+    diseaseId      Int
+    disease        Disease      @relation(fields: [diseaseId], references: [id])
+    sanitaryUnitId Int
+    sanitaryUnit   SanitaryUnit @relation(fields: [sanitaryUnitId], references: [id])
+    medicalUnitId  Int
+    medicalUnit    MedicalUnit  @relation(fields: [medicalUnitId], references: [id])
+}
+
+model Interview {
+    id           Int         @id @default(autoincrement())
+    status       Status      @default(NEW)
+    firstName    String
+    lastName     String
+    pesel        String
+    addressId    Int         @unique
+    address      Address     @relation(fields: [addressId], references: [id])
+    contactId    Int         @unique
+    contact      Contact     @relation(fields: [contactId], references: [id])
+    quarantineId Int?        @unique
+    quarantine   Quarantine? @relation(fields: [quarantineId], references: [id])
+    isolationId  Int?        @unique
+    isolation    Isolation?  @relation(fields: [isolationId], references: [id])
+    reportId     Int
+    report       Report      @relation(fields: [reportId], references: [id])
+}
+
+model Quarantine {
+    id        Int        @id @default(autoincrement())
+    startAt   String
+    endAt     String
+    interview Interview?
+}
+
+model Isolation {
+    id        Int        @id @default(autoincrement())
+    startAt   String
+    endAt     String
+    interview Interview?
 }
