@@ -21,6 +21,22 @@ enum Status {
     RESOLVED
 }
 
+enum Sex {
+    MALE
+    FEMALE
+}
+
+model Personal {
+    id         Int        @id @default(autoincrement())
+    firstName  String
+    secondName String?
+    lastName   String
+    pesel      String
+    sex        Sex
+    report     Report?
+    interview  Interview?
+}
+
 model User {
     id             Int           @id @default(autoincrement())
     email          String        @unique
@@ -32,6 +48,8 @@ model User {
     medicalUnit    MedicalUnit?  @relation(fields: [medicalUnitId], references: [id])
     sanitaryUnitId Int?
     sanitaryUnit   SanitaryUnit? @relation(fields: [sanitaryUnitId], references: [id])
+    report         Report[]
+    interview      Interview[]
 }
 
 model Profile {
@@ -67,6 +85,7 @@ model Contact {
     profile      Profile?
     sanitaryUnit SanitaryUnit?
     interview    Interview?
+    report       Report?
 }
 
 model MedicalUnit {
@@ -92,6 +111,7 @@ model SanitaryUnit {
     workers      User[]
     medicalUnits MedicalUnit[]
     reports      Report[]
+    interview    Interview[]
 }
 
 model Disease {
@@ -106,10 +126,13 @@ model Disease {
 model Report {
     id             Int          @id @default(autoincrement())
     status         Status       @default(NEW)
-    firstName      String
-    lastName       String
-    pesel          String
+    personalId     Int          @unique
+    personal       Personal     @relation(fields: [personalId], references: [id])
+    contactId      Int          @unique
+    contact        Contact      @relation(fields: [contactId], references: [id])
     interview      Interview[]
+    reportedById   Int
+    reportedBy     User         @relation(fields: [reportedById], references: [id])
     diseaseId      Int
     disease        Disease      @relation(fields: [diseaseId], references: [id])
     sanitaryUnitId Int
@@ -119,21 +142,24 @@ model Report {
 }
 
 model Interview {
-    id           Int         @id @default(autoincrement())
-    status       Status      @default(NEW)
-    firstName    String
-    lastName     String
-    pesel        String
-    addressId    Int         @unique
-    address      Address     @relation(fields: [addressId], references: [id])
-    contactId    Int         @unique
-    contact      Contact     @relation(fields: [contactId], references: [id])
-    quarantineId Int?        @unique
-    quarantine   Quarantine? @relation(fields: [quarantineId], references: [id])
-    isolationId  Int?        @unique
-    isolation    Isolation?  @relation(fields: [isolationId], references: [id])
-    reportId     Int
-    report       Report      @relation(fields: [reportId], references: [id])
+    id              Int          @id @default(autoincrement())
+    status          Status       @default(NEW)
+    personalId      Int?         @unique
+    personal        Personal?    @relation(fields: [personalId], references: [id])
+    interviewedById Int
+    interviewedBy   User         @relation(fields: [interviewedById], references: [id])
+    addressId       Int?         @unique
+    address         Address?     @relation(fields: [addressId], references: [id])
+    contactId       Int?         @unique
+    contact         Contact?     @relation(fields: [contactId], references: [id])
+    quarantineId    Int?         @unique
+    quarantine      Quarantine?  @relation(fields: [quarantineId], references: [id])
+    isolationId     Int?         @unique
+    isolation       Isolation?   @relation(fields: [isolationId], references: [id])
+    reportId        Int
+    report          Report       @relation(fields: [reportId], references: [id])
+    sanitaryUnitId  Int
+    sanitaryUnit    SanitaryUnit @relation(fields: [sanitaryUnitId], references: [id])
 }
 
 model Quarantine {
