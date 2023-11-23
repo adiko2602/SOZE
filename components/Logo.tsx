@@ -3,6 +3,7 @@ import { useBrakepoint } from "@/hooks/useBrakepoint";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import * as sozeLogo from "@/public/sozeLogo.svg";
 
 function Logo() {
   const { brakepoint } = useBrakepoint();
@@ -10,12 +11,7 @@ function Logo() {
     <div className="flex flex-row items-center gap-2">
       <Link href="/">
         <div className="w-[75px] h-[64px] relative">
-          <Image
-            alt="Logo"
-            src="/logo_75.png"
-            layout="fill"
-            objectFit="contain"
-          />
+          <Image alt="SOZE Logo" src={sozeLogo} priority={true} />
         </div>
       </Link>
       <div className="font-semibold uppercase">

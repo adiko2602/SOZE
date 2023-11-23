@@ -23,6 +23,7 @@ export function useBrakepoint() {
   };
 
   useEffect(() => {
+    handleBrakepoint();
     window.addEventListener("resize", handleBrakepoint);
     return () => {
       window.removeEventListener("resize", handleBrakepoint);
