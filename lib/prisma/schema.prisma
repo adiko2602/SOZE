@@ -10,8 +10,10 @@ datasource db {
 
 enum Role {
     USER
-    ADMIN
-    WORKER
+    MEDICAL_ADMIN
+    SANITARY_ADMIN
+    MEDICAL_WORKER
+    SANITARY_WORKER
     SUPER_ADMIN
 }
 
