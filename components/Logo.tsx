@@ -1,5 +1,5 @@
 "use client";
-import { useBrakepoint } from "@/hooks/useBrakepoint";
+import { useBrakepoint } from "@/lib/hooks/useBrakepoint";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
