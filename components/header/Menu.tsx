@@ -97,7 +97,7 @@ function Menu() {
             </Link>
           </DropdownMenuItem>
         ))}
-        {role !== "NOT_LOGIN" && (
+        {role && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="p-0 m-0">
