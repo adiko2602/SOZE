@@ -91,7 +91,7 @@ function Menu() {
         <DropdownMenuLabel>Menu</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {menuLinks[role].map((menuLink) => (
-          <DropdownMenuItem className="p-0 m-0">
+          <DropdownMenuItem className="p-0 m-0" key={menuLink.label}>
             <Link href={menuLink.url} className="w-full h-full p-2">
               {menuLink.label}
             </Link>
