@@ -14,21 +14,20 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
-import { signUpFormMutation } from "@/lib/mutations/auth";
 import { signUpFormSchema } from "@/lib/zod/form/signUp.form.schema";
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
 import { Sex } from "@prisma/client";
+import { useSignUpFormMutation } from "@/lib/hooks/mutations/auth";
 
 export default function SignUpForm() {
-  const { mutate, isPending } = signUpFormMutation();
+  const { mutate, isPending } = useSignUpFormMutation();
 
   const form = useForm<TSignUpForm>({
     resolver: zodResolver(signUpFormSchema),

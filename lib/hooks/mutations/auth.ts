@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { requests } from "../api/apiRequest";
-import { TSignUpForm } from "../types";
+import { requests } from "../../api/apiRequest";
+import { TSignUpForm } from "../../types";
 
-export function signUpFormMutation() {
+export function useSignUpFormMutation() {
   return useMutation({
     mutationKey: ["signUpFormMutation"],
     mutationFn: (values: TSignUpForm) =>
