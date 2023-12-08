@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { personalSchema } from "../personal.schema";
 
 export const signUpFormSchema = z.object({
   email: z
@@ -22,4 +23,5 @@ export const signUpFormSchema = z.object({
         });
       }
     }),
+  personal: personalSchema,
 });
