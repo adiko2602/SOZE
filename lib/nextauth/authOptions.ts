@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { signInWithCredentials } from "../server/auth";
+import { signInWithCredentials } from "../actions/auth";
 import { getErrorMessage } from "../helpers/getErrorMessage";
 
 export const authOptions: NextAuthOptions = {
@@ -34,7 +34,7 @@ export const authOptions: NextAuthOptions = {
             role: user.data.role,
           };
         } catch (err: unknown) {
-          throw new Error(encodeURI(getErrorMessage(err)));
+          throw new Error(getErrorMessage(err));
         }
       },
     }),
