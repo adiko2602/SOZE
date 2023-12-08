@@ -37,6 +37,7 @@ model Personal {
     sex        Sex
     report     Report?
     interview  Interview?
+    profile    Profile?
 }
 
 model User {
@@ -55,13 +56,13 @@ model User {
 }
 
 model Profile {
-    id        Int     @id @default(autoincrement())
-    firstName String
-    lastName  String
-    pesel     String  @unique
-    user      User?
-    contactId Int     @unique
-    contact   Contact @relation(fields: [contactId], references: [id])
+    id         Int      @id @default(autoincrement())
+    pesel      String   @unique
+    personalId Int      @unique
+    personal   Personal @relation(fields: [personalId], references: [id])
+    user       User?
+    contactId  Int      @unique
+    contact    Contact  @relation(fields: [contactId], references: [id])
 }
 
 model Address {
