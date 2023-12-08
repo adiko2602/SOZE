@@ -16,26 +16,12 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
 
 export default function SignInForm() {
+  const router = useRouter();
   const { toast } = useToast();
-  const toaster = useToast();
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
-
-  if (
-    error &&
-    toaster.toasts.filter((a) => a.itemID === "error").length === 0
-  ) {
-    toast({
-      itemID: "error",
-      variant: "destructive",
-      title: "Upsss... Coś poszło nie tak.",
-      description: error,
-    });
-  }
 
   const form = useForm<TSignInForm>({
     resolver: zodResolver(signInFormSchema),
@@ -43,11 +29,30 @@ export default function SignInForm() {
   });
 
   const onSubmit = async (values: TSignInForm) => {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email: values.email,
       password: values.password,
       callbackUrl: "/dashboard",
+      redirect: false,
     });
+
+    if (result?.error) {
+      toast({
+        variant: "destructive",
+        title: "Upsss... Coś poszło nie tak.",
+        description: result.error,
+      });
+      return;
+    }
+
+    if (result?.ok && result.url) {
+      toast({
+        variant: "default",
+        title: "",
+        description: "Zalogowano prawidłowo.",
+      });
+      router.push(result.url);
+    }
   };
 
   return (
@@ -61,7 +66,7 @@ export default function SignInForm() {
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
-                  type="email"
+                  type="input"
                   placeholder="Wpisz adres email"
                   {...field}
                 />
@@ -77,11 +82,7 @@ export default function SignInForm() {
             <FormItem>
               <FormLabel>Hasło</FormLabel>
               <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Wpisz adres hasło"
-                  {...field}
-                />
+                <Input type="password" placeholder="Wpisz hasło" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
