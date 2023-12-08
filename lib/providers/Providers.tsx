@@ -10,7 +10,8 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   getMessageOnError,
   getMessageOnSuccess,
-} from "../query/queryResponseMessage";
+} from "../helpers/queryResponseMessage";
+import { SessionProvider } from "next-auth/react";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
@@ -51,6 +52,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>{children}</SessionProvider>
+    </QueryClientProvider>
   );
 }
