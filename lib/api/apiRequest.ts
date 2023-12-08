@@ -12,19 +12,27 @@ function get<T>(url: string) {
 }
 
 function post<T, V>(url: string, body: V) {
-  return axios.post<T>(url, body).then((res) => responseBody<T>(res));
+  return axios
+    .post<ApiResponse<T>>(url, body)
+    .then((res) => responseBody<ApiResponse<T>>(res));
 }
 
 function put<T, V>(url: string, body: V) {
-  return axios.put<T>(url, body).then((res) => responseBody<T>(res));
+  return axios
+    .put<ApiResponse<T>>(url, body)
+    .then((res) => responseBody<ApiResponse<T>>(res));
 }
 
 function patch<T, V>(url: string, body: V) {
-  return axios.patch<T>(url, body).then((res) => responseBody<T>(res));
+  return axios
+    .patch<ApiResponse<T>>(url, body)
+    .then((res) => responseBody<ApiResponse<T>>(res));
 }
 
 function del<T>(url: string) {
-  return axios.delete<T>(url).then((res) => responseBody<T>(res));
+  return axios
+    .delete<ApiResponse<T>>(url)
+    .then((res) => responseBody<ApiResponse<T>>(res));
 }
 
 export const requests = {

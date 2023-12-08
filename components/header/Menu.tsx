@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,9 @@ import {
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useToast } from "../ui/use-toast";
 
 type TMenuLink = {
   label: string;
@@ -78,10 +81,30 @@ const menuLinks: {
 };
 
 function Menu() {
-  const role = "SANITARY_WORKER";
+  const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    const result = await signOut({
+      callbackUrl: "/auth/sign-in",
+      redirect: false,
+    });
+
+    if (result.url) {
+      toast({
+        variant: "default",
+        title: "",
+        description: "Wylogowano prawidłowo.",
+      });
+      router.push(result.url);
+    }
+    setIsOpen(false);
+  };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger>
         <div className="div-btn div-btn-outline div-btn-size-icon">
           <HamburgerMenuIcon />
@@ -90,28 +113,44 @@ function Menu() {
       <DropdownMenuContent>
         <DropdownMenuLabel>Menu</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {menuLinks[role].map((menuLink) => (
-          <DropdownMenuItem className="p-0 m-0" key={menuLink.label}>
-            <Link href={menuLink.url} className="w-full h-full p-2">
-              {menuLink.label}
-            </Link>
-          </DropdownMenuItem>
-        ))}
-        {role && (
+        {session?.user.role && (
           <>
+            {menuLinks[session.user.role].map((menuLink) => (
+              <DropdownMenuItem
+                onClick={() => setIsOpen(false)}
+                key={menuLink.label}
+              >
+                <Link href={menuLink.url} className="w-full h-full p-2">
+                  {menuLink.label}
+                </Link>
+              </DropdownMenuItem>
+            ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="p-0 m-0">
+            <DropdownMenuItem>
               <Link href="/profiles" className="w-full h-full p-2">
                 Profil
               </Link>
             </DropdownMenuItem>
-            <DropdownMenu>
-              <div className="p-2">
-                <Button className="w-full" size="sm">
-                  <div className="text-sm">Wyloguj</div>
-                </Button>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleSignOut}>
+              <div className="w-full h-full p-2 hover:cursor-pointer">
+                Wyloguj
               </div>
-            </DropdownMenu>
+            </DropdownMenuItem>
+          </>
+        )}
+        {!session && (
+          <>
+            {menuLinks["NOT_LOGIN"].map((menuLink) => (
+              <DropdownMenuItem
+                onClick={() => setIsOpen(false)}
+                key={menuLink.label}
+              >
+                <Link href={menuLink.url} className="w-full h-full p-2">
+                  {menuLink.label}
+                </Link>
+              </DropdownMenuItem>
+            ))}
           </>
         )}
       </DropdownMenuContent>

@@ -1,3 +1,5 @@
+"use server";
+
 import { Sex } from "@prisma/client";
 import {
   ErrorServerFunctionResponse,
