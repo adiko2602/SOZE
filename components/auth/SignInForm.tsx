@@ -18,6 +18,7 @@ import { Input } from "../ui/input";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
+import Loader from "../ui/loader";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -88,7 +89,12 @@ export default function SignInForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={form.formState.isSubmitting}>
+        <Button
+          type="submit"
+          disabled={form.formState.isSubmitting}
+          className="transition-all duration-500 ease-out"
+        >
+          <Loader showLoader={form.formState.isSubmitting} />
           Zaloguj
         </Button>
       </form>
