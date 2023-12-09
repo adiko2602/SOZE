@@ -151,7 +151,7 @@ function DashboardCards() {
     <>
       {session?.user.role &&
         cards[session.user.role].map((card) => (
-          <Card>
+          <Card key={card.content}>
             <CardHeader>
               <CardTitle>{card.header}</CardTitle>
             </CardHeader>
