@@ -25,9 +25,18 @@ import {
 } from "../ui/select";
 import { Sex } from "@prisma/client";
 import { useSignUpFormMutation } from "@/lib/hooks/mutations/auth";
+import { signIn } from "next-auth/react";
+import { useToast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import Loader from "../ui/loader";
 
 export default function SignUpForm() {
-  const { mutate, isPending } = useSignUpFormMutation();
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const { mutateAsync: signUpFormMutation, isPending } =
+    useSignUpFormMutation();
 
   const form = useForm<TSignUpForm>({
     resolver: zodResolver(signUpFormSchema),
@@ -35,8 +44,33 @@ export default function SignUpForm() {
   });
 
   const onSubmit = async (values: TSignUpForm) => {
-    console.log("XD");
-    mutate(values);
+    const mutationResult = await signUpFormMutation(values);
+    if (!mutationResult.success) return;
+
+    const result = await signIn("credentials", {
+      email: values.email,
+      password: values.passwords.password,
+      callbackUrl: "/dashboard",
+      redirect: false,
+    });
+
+    if (result?.error) {
+      toast({
+        variant: "destructive",
+        title: "Upsss... Coś poszło nie tak.",
+        description: result.error,
+      });
+      return;
+    }
+
+    if (result?.ok && result.url) {
+      toast({
+        variant: "default",
+        title: "",
+        description: "Zalogowano prawidłowo.",
+      });
+      router.push(result.url);
+    }
   };
 
   return (
@@ -179,6 +213,7 @@ export default function SignUpForm() {
         />
 
         <Button type="submit" disabled={isPending}>
+          <Loader showLoader={isPending} />
           Zarejestruj
         </Button>
       </form>

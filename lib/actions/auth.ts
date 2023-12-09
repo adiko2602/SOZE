@@ -99,7 +99,7 @@ export async function signUpWithCreadentials(values: TSignUpForm) {
     });
 
     return new SuccessServerFunctionResponse(
-      "Utworzono nowego użytkownika. Możesz się teraz zalogować.",
+      "Utworzono nowego użytkownika.",
       {}
     );
   } catch (err) {
