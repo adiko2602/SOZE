@@ -11,15 +11,109 @@ import {
 } from "../ui/dropdown-menu";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { Button } from "../ui/button";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 type TMenuLink = {
   label: string;
   url: string;
 };
+
+const NOT_LOGIN: TMenuLink[] = [
+  {
+    label: "Zaloguj",
+    url: "/auth/sign-in",
+  },
+  {
+    label: "Zarejestruj",
+    url: "/auth/sign-up",
+  },
+];
+
+const USER: TMenuLink[] = [
+  {
+    label: "Profil",
+    url: "/profile/user/id",
+  },
+  {
+    label: "Moje zgłoszenia",
+    url: "/report/user/id",
+  },
+  {
+    label: "Moje wywiady",
+    url: "/interview/user/id",
+  },
+];
+
+const MEDICAL_WORKER: TMenuLink[] = [
+  {
+    label: "Zgłoszenia",
+    url: "/report",
+  },
+  {
+    label: "Nowe zgłoszenie",
+    url: "/report/create",
+  },
+  {
+    label: "divider",
+    url: "divider",
+  },
+  ...USER,
+];
+
+const MEDICAL_ADMIN: TMenuLink[] = [
+  {
+    label: "Zarządaj punktem",
+    url: "/medical-unit/id",
+  },
+  {
+    label: "Zarządzaj pracownikami",
+    url: "/medical-unit/id/worker",
+  },
+  {
+    label: "divider",
+    url: "divider",
+  },
+  ...MEDICAL_WORKER,
+];
+
+const SANITARY_WORKER: TMenuLink[] = [
+  {
+    label: "Zgłoszenia",
+    url: "/report",
+  },
+  {
+    label: "Wywiady",
+    url: "/interview",
+  },
+  {
+    label: "Nowy wywiad",
+    url: "/interview/create",
+  },
+  {
+    label: "divider",
+    url: "divider",
+  },
+  ...USER,
+];
+
+const SANITARY_ADMIN: TMenuLink[] = [
+  {
+    label: "Zarządaj punktem",
+    url: "/sanitary-unit/id",
+  },
+  {
+    label: "Zarządzaj pracownikami",
+    url: "/medical-unit/id/worker",
+  },
+  {
+    label: "divider",
+    url: "divider",
+  },
+  ...SANITARY_WORKER,
+];
 
 const menuLinks: {
   NOT_LOGIN: TMenuLink[];
@@ -30,53 +124,12 @@ const menuLinks: {
   SANITARY_WORKER: TMenuLink[];
   SUPER_ADMIN: TMenuLink[];
 } = {
-  NOT_LOGIN: [
-    {
-      label: "Zaloguj",
-      url: "/auth/sign-in",
-    },
-    {
-      label: "Zarejestruj",
-      url: "/auth/sign-up",
-    },
-  ],
-  USER: [],
-  MEDICAL_ADMIN: [
-    {
-      label: "Zarządzaj punktem",
-      url: "/",
-    },
-  ],
-  SANITARY_ADMIN: [
-    {
-      label: "Zarządzaj punktem",
-      url: "/",
-    },
-  ],
-  MEDICAL_WORKER: [
-    {
-      label: "Zgłoś",
-      url: "/reports/create",
-    },
-    {
-      label: "Przeglądaj zgłoszenia",
-      url: "/reports",
-    },
-  ],
-  SANITARY_WORKER: [
-    {
-      label: "Przeglądaj zgłoszenia",
-      url: "/reports",
-    },
-    {
-      label: "Przeprowadź wywiad",
-      url: "/interviews/create",
-    },
-    {
-      label: "Wywiady",
-      url: "/interviews",
-    },
-  ],
+  NOT_LOGIN: NOT_LOGIN,
+  USER: USER,
+  MEDICAL_ADMIN: MEDICAL_ADMIN,
+  SANITARY_ADMIN: SANITARY_ADMIN,
+  MEDICAL_WORKER: MEDICAL_WORKER,
+  SANITARY_WORKER: SANITARY_WORKER,
   SUPER_ADMIN: [],
 };
 
@@ -113,9 +166,10 @@ function Menu() {
       <DropdownMenuContent>
         <DropdownMenuLabel>Menu</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {session?.user.role && (
-          <>
-            {menuLinks[session.user.role].map((menuLink) => (
+        {session?.user.role &&
+          menuLinks[session.user.role].map((menuLink) => {
+            if (menuLink.label === "divider") return <DropdownMenuSeparator />;
+            return (
               <DropdownMenuItem
                 onClick={() => setIsOpen(false)}
                 key={menuLink.label}
@@ -124,13 +178,10 @@ function Menu() {
                   {menuLink.label}
                 </Link>
               </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href="/profiles" className="w-full h-full p-2">
-                Profil
-              </Link>
-            </DropdownMenuItem>
+            );
+          })}
+        {session?.user.role && (
+          <>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>
               <div className="w-full h-full p-2 hover:cursor-pointer">
@@ -139,20 +190,17 @@ function Menu() {
             </DropdownMenuItem>
           </>
         )}
-        {!session && (
-          <>
-            {menuLinks["NOT_LOGIN"].map((menuLink) => (
-              <DropdownMenuItem
-                onClick={() => setIsOpen(false)}
-                key={menuLink.label}
-              >
-                <Link href={menuLink.url} className="w-full h-full p-2">
-                  {menuLink.label}
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </>
-        )}
+        {!session &&
+          menuLinks["NOT_LOGIN"].map((menuLink) => (
+            <DropdownMenuItem
+              onClick={() => setIsOpen(false)}
+              key={menuLink.label}
+            >
+              <Link href={menuLink.url} className="w-full h-full p-2">
+                {menuLink.label}
+              </Link>
+            </DropdownMenuItem>
+          ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
