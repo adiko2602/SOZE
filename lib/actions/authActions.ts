@@ -25,8 +25,9 @@ export async function signInWithCredentials({
       select: {
         id: true,
         email: true,
-        role: true,
         password: true,
+        role: true,
+        profileId: true,
       },
     });
 
@@ -84,13 +85,16 @@ export async function signUpWithCreadentials(values: TSignUpForm) {
             personal: {
               create: {
                 firstName: values.personal.firstName,
-                secondName: values.personal.secondName,
+                secondName: values.personal.secondName ?? "",
                 lastName: values.personal.lastName,
                 pesel: values.personal.pesel,
                 sex: values.personal.sex as Sex,
               },
             },
             contact: {
+              create: {},
+            },
+            address: {
               create: {},
             },
           },
@@ -103,6 +107,7 @@ export async function signUpWithCreadentials(values: TSignUpForm) {
       {}
     );
   } catch (err) {
+    console.log(err);
     return new ErrorServerFunctionResponse("Nieznany błąd.");
   }
 }

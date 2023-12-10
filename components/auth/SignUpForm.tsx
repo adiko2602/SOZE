@@ -24,11 +24,10 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Sex } from "@prisma/client";
-import { useSignUpFormMutation } from "@/lib/hooks/mutations/auth";
+import { useSignUpFormMutation } from "@/lib/hooks/mutations/authMutations";
 import { signIn } from "next-auth/react";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 import Loader from "../ui/loader";
 
 export default function SignUpForm() {
