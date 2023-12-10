@@ -26,7 +26,9 @@ export default function RootLayout({
         <body className={`${lato.variable} font-lato`}>
           <main className="flex min-h-screen flex-col">
             <Header />
-            {children}
+            <div className="p-2 flex justify-center">
+              <div className="max-w-5xl w-full">{children}</div>
+            </div>
           </main>
           <Toaster />
         </body>
