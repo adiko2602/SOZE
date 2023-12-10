@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { signInWithCredentials } from "../actions/auth";
+import { signInWithCredentials } from "../actions/authActions";
 import { getErrorMessage } from "../helpers/getErrorMessage";
 
 export const authOptions: NextAuthOptions = {
@@ -32,6 +32,7 @@ export const authOptions: NextAuthOptions = {
             id: user.data.id,
             email: user.data.email,
             role: user.data.role,
+            profileId: user.data.profileId,
           };
         } catch (err: unknown) {
           throw new Error(getErrorMessage(err));
@@ -47,7 +48,12 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ user, token }) {
       if (user) {
-        token.user = { ...user };
+        token.user = {
+          id: user.id as number,
+          email: user.email,
+          profileId: user.profileId,
+          role: user.role,
+        };
         return token;
       }
       return token;
@@ -56,6 +62,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token) {
         session.user = { ...token.user };
+        return session;
       }
       return session;
     },
