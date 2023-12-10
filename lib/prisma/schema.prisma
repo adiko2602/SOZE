@@ -31,7 +31,7 @@ enum Sex {
 model Personal {
     id         Int        @id @default(autoincrement())
     firstName  String
-    secondName String?
+    secondName String?    @default("")
     lastName   String
     pesel      String
     sex        Sex
@@ -59,31 +59,34 @@ model Profile {
     id         Int      @id @default(autoincrement())
     pesel      String   @unique
     personalId Int      @unique
-    personal   Personal @relation(fields: [personalId], references: [id])
     user       User?
+    personal   Personal @relation(fields: [personalId], references: [id])
     contactId  Int      @unique
     contact    Contact  @relation(fields: [contactId], references: [id])
+    addressId  Int      @unique
+    address    Address  @relation(fields: [addressId], references: [id])
 }
 
 model Address {
     id              Int           @id @default(autoincrement())
-    label           String
-    countryName     String
-    state           String
-    postalCode      String
-    city            String
-    street          String?
-    houseNumber     String
-    apartmentNumber String?
+    label           String?       @default("")
+    countryName     String?       @default("")
+    state           String?       @default("")
+    postalCode      String?       @default("")
+    city            String?       @default("")
+    street          String?       @default("")
+    houseNumber     String?       @default("")
+    apartmentNumber String?       @default("")
     medicalUnit     MedicalUnit?
     sanitaryUnit    SanitaryUnit?
     interview       Interview?
+    profile         Profile?
 }
 
 model Contact {
     id           Int           @id @default(autoincrement())
-    email        String?
-    phoneNumber  String?
+    email        String?       @default("")
+    phoneNumber  String?       @default("")
     medicalUnit  MedicalUnit?
     profile      Profile?
     sanitaryUnit SanitaryUnit?
@@ -121,8 +124,8 @@ model Disease {
     id      Int      @id @default(autoincrement())
     code    String
     name    String
-    desc    String?
-    desc2   String?
+    desc    String?  @default("")
+    desc2   String?  @default("")
     reports Report[]
 }
 
