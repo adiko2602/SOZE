@@ -1,13 +1,20 @@
 import { DefaultSession, DefaultUser } from "next-auth";
 import { DefaultJWT } from "next-auth/jwt";
-import { userDto } from "./lib/prisma/models/userDTO";
 import { Role } from "@prisma/client";
+
+interface CustomUser {
+  id: number;
+  email: string;
+  role: Role;
+  profileId: number;
+}
 
 declare module "next-auth" {
   interface User {
     id: number;
     email: string;
     role: Role;
+    profileId: number;
   }
 
   interface Session extends DefaultSession {
