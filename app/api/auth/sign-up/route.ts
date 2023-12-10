@@ -1,5 +1,5 @@
 import { Post } from "@/lib/api/serverFunctionResponseToApiResponse";
-import { signUpWithCreadentials } from "@/lib/actions/auth";
+import { signUpWithCreadentials } from "@/lib/actions/authActions";
 import { TSignUpForm } from "@/lib/types";
 import { NextRequest } from "next/server";
 
